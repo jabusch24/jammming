@@ -1,6 +1,8 @@
-.SearchResults {
-  width: 40%;
+.ConcertList {
+  width: 50%;
   height: 600px;
+  margin: auto;
+  margin-top: 50px;
   overflow-y: scroll;
   padding: .88rem;
   background-color: rgba(1, 12, 63, 0.7);
@@ -13,7 +15,7 @@
 }
 
 @media only screen and (max-width: 1020px) {
-  .SearchResults {
+  .ConcertList {
     width: 90%;
     margin-bottom: 2rem;
   }

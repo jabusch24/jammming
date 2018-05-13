@@ -3,7 +3,9 @@ import './App.css';
 import SearchBar from '../SearchBar/SearchBar.js';
 import SearchResults from '../SearchResults/SearchResults.js';
 import Playlist from '../Playlist/Playlist.js';
-import Spotify from '../../util/Spotify';
+import Spotify from '../../util/Spotify.js';
+import ConcertList from '../ConcertList/ConcertList.js'
+import Songkick from '../../util/Songkick.js'
 
 Spotify.getAccessToken();
 
@@ -13,13 +15,16 @@ class App extends Component {
     this.state = {
       searchResults: [],
       playlistName: "",
-      playlistTracks: []
+      playlistTracks: [],
+      concerts: []
     };
     this.addTrack = this.addTrack.bind(this);
     this.removeTrack = this.removeTrack.bind(this);
     this.updatePlaylistName = this.updatePlaylistName.bind(this);
     this.savePlaylist = this.savePlaylist.bind(this);
     this.search = this.search.bind(this);
+    this.collectArtists = this.collectArtists.bind(this);
+    this.searchConcerts = this.searchConcerts.bind(this);
   }
 
   addTrack(track) {
@@ -55,6 +60,23 @@ class App extends Component {
       }));
   }
 
+  collectArtists(){
+    let artists = this.state.playlistTracks.map(track => track.artist)
+    let uniqueArtists = new Set(artists)
+    uniqueArtists = Array.from(uniqueArtists);
+    console.log(uniqueArtists);
+    return uniqueArtists;
+  }
+
+  searchConcerts(){
+    Songkick.searchConcerts(this.collectArtists())
+    .then(concerts => this.setState(
+      {
+        concerts: concerts
+      }
+    ));
+  }
+
   render() {
     return (
       <div>
@@ -63,7 +85,10 @@ class App extends Component {
           <SearchBar onSearch={this.search} onLogin={this.login}/>
           <div className="App-playlist">
             <SearchResults searchResults={this.state.searchResults} onAdd={this.addTrack}/>
-            <Playlist playlistName={this.state.playlistName} playlistTracks={this.state.playlistTracks} onRemove={this.removeTrack} onNameChange={this.updatePlaylistName} onSave={this.savePlaylist}/>
+            <Playlist playlistName={this.state.playlistName} playlistTracks={this.state.playlistTracks} onRemove={this.removeTrack} onNameChange={this.updatePlaylistName} onSave={this.savePlaylist} onFind={this.collectArtists}/>
+          </div>
+          <div className="App-concert">
+            <ConcertList concerts={this.state.concerts}/>
           </div>
         </div>
       </div>
